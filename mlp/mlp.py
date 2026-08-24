@@ -76,16 +76,32 @@ class MLP:
             self.layers[i].w -= learning_rate * dw
             self.layers[i].b -= learning_rate * db
 
-    def train(self, X_train: np.ndarray, y_train: np.ndarray, X_test: np.ndarray= None, y_test: np.ndarray= None, nb_iteration: int= 1000, learning_rate: float= 1.)\
-          -> tuple[list[float], list[float]] | list[float]: #return train_losses and test_losses or only train_losses
+    def train(self, X_train, y_train, X_test=None, y_test=None, nb_iteration=1000, learning_rate=1., mini_batch_size=False):
         train_losses = []
         if X_test is not None:
             test_losses = []
-        
+
+        if not mini_batch_size:
+            mini_batch_size = len(X_train)
+
+        X_shuffled, y_shuffled = X_train, y_train
+        pos = 0
+
         for i in range(nb_iteration):
-            pred = self.predict(X_train)
-            train_losses.append(self.cost_func(pred, y_train))
-            self.gradient_descent(pred, y_train, learning_rate)
+            if pos + mini_batch_size > len(X_train):
+                # on a fait le tour, on remélange et on repart de 0
+                indices = np.random.permutation(len(X_train))
+                X_shuffled = X_train[indices]
+                y_shuffled = y_train[indices]
+                pos = 0
+
+            X_batch = X_shuffled[pos : pos + mini_batch_size]
+            y_batch = y_shuffled[pos : pos + mini_batch_size]
+            pos += mini_batch_size
+
+            pred = self.predict(X_batch)
+            train_losses.append(self.cost_func(pred, y_batch))
+            self.gradient_descent(pred, y_batch, learning_rate)
 
             if X_test is not None:
                 test_pred = self.predict(X_test)
