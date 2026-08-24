@@ -10,7 +10,7 @@ def relu(x: np.ndarray):
     return np.maximum(0, x)
 
 def relu_prime(x: np.ndarray):
-    return np.where(x >= 0, 1, 0)
+    return np.where(x > 0, 1, 0)
 
 def mse(predicted: np.ndarray, expected: np.ndarray):
     return np.mean((expected - predicted)**2)
@@ -56,6 +56,13 @@ class MLP:
 
         self.cost_func = mse
         self.cost_func_prime = mse_prime
+
+    def set_hidden_layers_activation(self, activation, activation_prime):
+        for layer in self.layers[:-1]:
+            layer.set_activation(activation, activation_prime)
+
+    def set_output_layers_activation(self, activation, activation_prime):
+        self.layers[:, -1].set_activation(activation, activation_prime)
 
     def predict(self, entries: np.ndarray) -> np.ndarray: #launch forward prop and return result
         for i in range(self.nb_layers):
