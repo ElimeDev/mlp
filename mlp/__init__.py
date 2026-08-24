@@ -1,3 +1,3 @@
-from mlp import MLP
+from .mlp import MLP
 
 __all__ = ["MLP"]
