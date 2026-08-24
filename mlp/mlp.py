@@ -103,7 +103,7 @@ class MLP:
             train_losses.append(self.cost_func(pred, y_batch))
             self.gradient_descent(pred, y_batch, learning_rate)
 
-            if X_test is not None:
+            if X_test is not None and i % 50 == 0:
                 test_pred = self.predict(X_test)
                 test_losses.append(self.cost_func(test_pred, y_test))
 
