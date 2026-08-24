@@ -28,8 +28,8 @@ class Layer:
         self.last_activation = None
         self.last_entries = None
 
-        self.activation = relu
-        self.activation_prime = relu_prime
+        self.activation = sigmoide
+        self.activation_prime = sigmoide_prime
 
     def set_activation(self, activation, activation_prime):
         self.activation = activation
