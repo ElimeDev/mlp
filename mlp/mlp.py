@@ -6,6 +6,12 @@ def sigmoide(x: np.ndarray):
 def sigmoide_prime(x: np.ndarray):
     return x * (1 - x)
 
+def relu(x: np.ndarray):
+    return np.maximum(0, x)
+
+def relu_prime(x: np.ndarray):
+    return np.where(x >= 0, 1, 0)
+
 def mse(predicted: np.ndarray, expected: np.ndarray):
     return np.mean((expected - predicted)**2)
 
@@ -22,8 +28,8 @@ class Layer:
         self.last_activation = None
         self.last_entries = None
 
-        self.activation = sigmoide
-        self.activation_prime = sigmoide_prime
+        self.activation = relu
+        self.activation_prime = relu_prime
 
     def set_activation(self, activation, activation_prime):
         self.activation = activation
