@@ -18,6 +18,6 @@ nb_iteration = 2000
 learning_rate = 2
 
 mlp = MLP([2, 2, 1])
-losses = mlp.train(x, y, nb_iteration= nb_iteration, learning_rate= learning_rate)
+losses = mlp.train(x, y, epochs= nb_iteration, learning_rate= learning_rate)
 
 print("final mse : ", losses[-1])

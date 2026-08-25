@@ -76,37 +76,26 @@ class MLP:
             self.layers[i].w -= learning_rate * dw
             self.layers[i].b -= learning_rate * db
 
-    def train(self, X_train, y_train, X_test=None, y_test=None, nb_iteration=1000, learning_rate=1., mini_batch_size=False):
-        train_losses = []
-        if X_test is not None:
-            test_losses = []
+    def train(self, X_train, y_train, epochs=1000, learning_rate=1., mini_batch_size=False):
+        losses = []
 
         if not mini_batch_size:
             mini_batch_size = len(X_train)
 
-        X_shuffled, y_shuffled = X_train, y_train
-        pos = 0
+        for i in range(epochs):
+            indices = np.random.permutation(len(X_train))
+            X_shuffled = X_train[indices]
+            y_shuffled = y_train[indices]
 
-        for i in range(nb_iteration):
-            if pos + mini_batch_size > len(X_train):
-                # on a fait le tour, on remélange et on repart de 0
-                indices = np.random.permutation(len(X_train))
-                X_shuffled = X_train[indices]
-                y_shuffled = y_train[indices]
-                pos = 0
+            batch_losses = []
+            for start in range(0, len(X_shuffled), mini_batch_size):
+                X_batch = X_shuffled[start : start + mini_batch_size]
+                y_batch = y_shuffled[start : start + mini_batch_size]
 
-            X_batch = X_shuffled[pos : pos + mini_batch_size]
-            y_batch = y_shuffled[pos : pos + mini_batch_size]
-            pos += mini_batch_size
+                pred = self.predict(X_batch)
+                batch_losses.append(self.cost_func(pred, y_batch))
+                self.gradient_descent(pred, y_batch, learning_rate)
 
-            pred = self.predict(X_batch)
-            train_losses.append(self.cost_func(pred, y_batch))
-            self.gradient_descent(pred, y_batch, learning_rate)
+            losses.append(np.mean(batch_losses))
 
-            if X_test is not None and i % 50 == 0:
-                test_pred = self.predict(X_test)
-                test_losses.append(self.cost_func(test_pred, y_test))
-
-        if X_test is not None:
-            return (train_losses, test_losses)
-        return train_losses
+        return losses
