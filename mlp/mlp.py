@@ -63,6 +63,10 @@ class MLP:
         self.cost_func = mse
         self.cost_func_prime = mse_prime
 
+    def set_cost_func(self, cost_func, cost_func_prime):
+        self.cost_func = cost_func
+        self.cost_func_prime = cost_func_prime
+
     def set_hidden_layers_activation(self, activation, activation_prime):
         for layer in self.layers[:-1]:
             layer.set_activation(activation, activation_prime)
