@@ -11,9 +11,9 @@ from .mlp import (
 )
 
 __all__ = [
+	"MLP",
     "cross_entropy",
     "cross_entropy_prime",
-	"MLP",
 	"mse",
 	"mse_prime",
 	"relu",
