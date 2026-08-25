@@ -19,9 +19,11 @@ def mse_prime(predicted: np.ndarray, expected: np.ndarray):
     return 2 * (predicted - expected) / predicted.shape[0]
 
 def cross_entropy(predicted: np.ndarray, expected: np.ndarray):
+    predicted = np.clip(predicted, np.finfo(float).eps, 1 - np.finfo(float).eps)
     return -np.mean(expected * np.log(predicted) + (1 - expected) * np.log(1 - predicted))
 
 def cross_entropy_prime(predicted: np.ndarray, expected: np.ndarray):
+    predicted = np.clip(predicted, np.finfo(float).eps, 1 - np.finfo(float).eps)
     return (predicted - expected) / (predicted * (1 - predicted)) / expected.shape[0]
 
 class Layer:
