@@ -12,7 +12,7 @@ from .mlp import (
 
 __all__ = [
     "cross_entropy",
-    "cross_entropy_prime"
+    "cross_entropy_prime",
 	"MLP",
 	"mse",
 	"mse_prime",
