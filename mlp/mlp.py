@@ -72,21 +72,21 @@ class MLP:
             layer.set_activation(activation, activation_prime)
 
     def set_output_layers_activation(self, activation, activation_prime):
-        self.layers[:, -1].set_activation(activation, activation_prime)
+        self.layers[-1].set_activation(activation, activation_prime)
 
     def predict(self, entries: np.ndarray) -> np.ndarray: #launch forward prop and return result
         for i in range(self.nb_layers):
             entries = self.layers[i].forward_prop(entries)
         return entries 
 
-    def gradient_descent(self, predicted: np.ndarray, expected: np.ndarray, learning_rate: float): #launch back prop and apply correction
+    def gradient_descent(self, predicted: np.ndarray, expected: np.ndarray, learning_rate: float, lambda_= 0.0, training_data_size= 0): #launch back prop and apply correction
         delta = self.cost_func_prime(predicted, expected)
         for i in reversed(range(self.nb_layers)):
             (dw, db, delta) = self.layers[i].back_prop(delta)
-            self.layers[i].w -= learning_rate * dw
+            self.layers[i].w = (1 - learning_rate * (lambda_ / training_data_size)) * self.layers[i].w - learning_rate * dw
             self.layers[i].b -= learning_rate * db
 
-    def train(self, X_train, y_train, epochs=1000, learning_rate=1., mini_batch_size=False):
+    def train(self, X_train, y_train, epochs=1000, learning_rate=1., mini_batch_size=False, lambda_= False):
         losses = []
 
         if not mini_batch_size:
@@ -104,7 +104,7 @@ class MLP:
 
                 pred = self.predict(X_batch)
                 batch_losses.append(self.cost_func(pred, y_batch))
-                self.gradient_descent(pred, y_batch, learning_rate)
+                self.gradient_descent(pred, y_batch, learning_rate, lambda_= lambda_, training_data_size= X_train.shape[0])
 
             losses.append(np.mean(batch_losses))
 
