@@ -1,5 +1,12 @@
 import numpy as np
 
+def softmax(x: np.ndarray):
+    exp_x = np.exp(x - np.max(x, axis=1, keepdims=True))
+    return exp_x / np.sum(exp_x, axis=1, keepdims=True)
+
+def softmax_prime(x: np.ndarray):
+    return np.ones_like(x) #we considere its used only with log_likelihood
+
 def sigmoide(x: np.ndarray):
     return 1 / (1 + np.exp(-x))
 
@@ -25,6 +32,15 @@ def cross_entropy(predicted: np.ndarray, expected: np.ndarray):
 def cross_entropy_prime(predicted: np.ndarray, expected: np.ndarray):
     predicted = np.clip(predicted, np.finfo(float).eps, 1 - np.finfo(float).eps)
     return (predicted - expected) / (predicted * (1 - predicted)) / expected.shape[0]
+
+def log_likelihood(predicted: np.ndarray, expected: np.ndarray): #predicted with softmax and expected contain label 0, 2, 5 ...
+    expected = expected.ravel()
+    return -np.mean(np.log(predicted[np.arange(len(expected)), expected]))
+
+def log_likelihood_prime(predicted: np.ndarray, expected: np.ndarray):
+    expected_onehot = np.zeros_like(predicted)
+    expected_onehot[np.arange(len(expected)), expected.ravel()] = 1
+    return predicted - expected_onehot
 
 class Layer:
     def __init__(self, n_in: int, n_out: int):
