@@ -65,6 +65,17 @@ class MLP:
         self.cost_func = mse
         self.cost_func_prime = mse_prime
 
+        #only train_losses is computed
+        self.last_training_data = {
+            "train_losses" : None, 
+            "test_losses" : None, 
+            "train_accuracy" : None, 
+            "test_accuracy" : None
+        }
+
+    def get_last_training_data(self):
+        return self.last_training_data
+
     def set_cost_func(self, cost_func, cost_func_prime):
         self.cost_func = cost_func
         self.cost_func_prime = cost_func_prime
@@ -88,8 +99,8 @@ class MLP:
             self.layers[i].w = (1 - learning_rate * (lambda_ / training_data_size)) * self.layers[i].w - learning_rate * dw
             self.layers[i].b -= learning_rate * db
 
-    def train(self, X_train, y_train, epochs=1000, learning_rate=1., mini_batch_size=False, lambda_= False):
-        losses = []
+    def train(self, X_train, y_train, epochs= 1000, learning_rate= 1., mini_batch_size= False, lambda_= False):
+        train_losses = []
 
         if not mini_batch_size:
             mini_batch_size = len(X_train)
@@ -108,6 +119,6 @@ class MLP:
                 batch_losses.append(self.cost_func(pred, y_batch))
                 self.gradient_descent(pred, y_batch, learning_rate, lambda_= lambda_, training_data_size= X_train.shape[0])
 
-            losses.append(np.mean(batch_losses))
+            train_losses.append(np.mean(batch_losses))
 
-        return losses
+        self.last_training_data["train_losses"] = train_losses
