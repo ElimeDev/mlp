@@ -47,7 +47,7 @@ class Layer:
         self.n_in, self.n_out = n_in, n_out
 
         self.b = np.random.randn(n_out)
-        self.w = np.random.randn(n_out, n_in)
+        self.w = np.random.randn(n_out, n_in) * (1/np.sqrt(n_in))
 
         self.last_activation = None
         self.last_entries = None
